@@ -1,0 +1,7 @@
+{
+  "name": "SUPABASE PWA Photo Booth",
+  "description": "A progressive web application that allows users to upload photos, apply beautiful frames, and instantly share their memories. It features a simple interface for frame selection and a preview to download, and share photos.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
