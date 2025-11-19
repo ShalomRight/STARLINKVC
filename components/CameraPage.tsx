@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { ArrowLeft, Download, Share2, Loader2, RefreshCw, Link, Star } from 'lucide-react';
 import { type Frame } from '../types';
@@ -18,7 +17,6 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
   const [isStarLinking, setIsStarLinking] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
 
-
   const drawCanvas = useCallback(async () => {
     setIsProcessing(true);
     try {
@@ -28,7 +26,6 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
         if (!ctx) return;
 
         const userImage = new Image();
-
         const userImagePromise = new Promise<void>((resolve, reject) => {
             userImage.onload = () => resolve();
             userImage.onerror = reject;
@@ -98,19 +95,17 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
     if (!compositedImage) return;
     const a = document.createElement('a');
     a.href = compositedImage;
-    a.download = `photo-frame-studio-${Date.now()}.jpg`;
+    a.download = `ulp-star-${Date.now()}.jpg`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   };
   
-  // Uses Native Web Share API to share the FILE directly (no cloud upload)
   const handleShare = async () => {
     if (!compositedImage) return;
     setShareError(null);
     
     try {
-        // Convert base64 to blob
         const res = await fetch(compositedImage);
         const blob = await res.blob();
         const file = new File([blob], `star-photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
@@ -118,12 +113,11 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
-                title: 'My Star Photo',
+                title: 'My ULP Photo',
                 text: 'Check out my photo!',
             });
         } else {
-            // Fallback if file sharing not supported
-             setShareError("Native sharing not supported on this device. Please use Download.");
+             setShareError("Native sharing not supported. Please use Download.");
         }
     } catch (error) {
         console.error('Error sharing:', error);
@@ -131,7 +125,6 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
     }
   };
 
-  // Uploads to Cloudinary and shares the Link
   const handleStarLink = async () => {
     if (!compositedImage || isStarLinking) return;
     setIsStarLinking(true);
@@ -139,21 +132,10 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
 
     try {
       await uploadToCloudinary(compositedImage);
-      
-      // if (navigator.share) {
-      //   await navigator.share({
-      //     title: 'My Star Photo',
-      //     text: 'Check out the photo I framed!',
-      //     url: publicUrl,
-      //   });
-      // } else {
-      //   await navigator.clipboard.writeText(publicUrl);
-      //   alert('Star Link copied to clipboard!');
-      // }
     } catch (error) {
       console.error('Star Link error:', error);
       if (error instanceof Error) {
-        setShareError(`Star Link failed: ${error.message}. Check Cloudinary config.`);
+        setShareError(`Star Link failed: ${error.message}.`);
       } else {
         setShareError('An unknown error occurred.');
       }
@@ -162,71 +144,71 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
     }
   };
 
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 text-gray-800 flex flex-col">
-       <header className="flex items-center justify-between p-4 bg-white/80 backdrop-blur-lg border-b border-gray-200 z-10">
-        <button onClick={onBack} className="p-2 hover:bg-gray-200 rounded-full">
-            <ArrowLeft className="w-6 h-6" />
+    <div className="h-full flex flex-col bg-red-700 text-white">
+       {/* Header */}
+       <header className="flex items-center justify-between p-4 bg-red-700 z-10 flex-none">
+        <button onClick={onBack} className="p-2 hover:bg-red-800 rounded transition-colors">
+            <ArrowLeft className="w-6 h-6 text-white" />
         </button>
-        <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Preview & Share</h2>
-        <button onClick={onStartOver} className="p-2 hover:bg-gray-200 rounded-full">
-            <RefreshCw className="w-5 h-5" />
+        <h2 className="text-xl font-sans font-black italic text-white uppercase tracking-tighter transform -skew-x-6">Review</h2>
+        <button onClick={onStartOver} className="p-2 hover:bg-red-800 rounded transition-colors">
+            <RefreshCw className="w-5 h-5 text-white" />
         </button>
       </header>
 
-      <main className="flex-1 flex items-center justify-center p-4">
-        <div className="relative w-full h-full flex items-center justify-center">
+      {/* Canvas Container */}
+      <main className="flex-1 bg-neutral-100 flex items-center justify-center p-4 overflow-hidden relative">
+        <div className="w-full h-full flex items-center justify-center">
             <canvas ref={canvasRef} className="hidden" />
+            
             {isProcessing && (
-                <div className="w-full h-full flex items-center justify-center rounded-2xl">
-                    <Loader2 className="w-10 h-10 animate-spin text-purple-600" />
+                <div className="flex flex-col items-center gap-3 text-neutral-900">
+                    <Loader2 className="w-10 h-10 animate-spin text-red-600" />
+                    <p className="font-sans font-black italic uppercase tracking-wider">Generating...</p>
                 </div>
             )}
+            
             {compositedImage && !isProcessing && (
-                <img src={compositedImage} alt="Preview" className="max-w-full max-h-[80vh] object-contain shadow-2xl rounded-lg" />
-            )}
-            {!compositedImage && !isProcessing && (
-                 <div className="w-full h-full flex items-center justify-center rounded-2xl bg-gray-200">
-                    <p>Error creating image.</p>
-                </div>
+                <img src={compositedImage} alt="Preview" className="max-w-full max-h-full object-contain shadow-2xl border-4 border-white" />
             )}
         </div>
       </main>
 
-      <footer className="p-4 bg-white/80 backdrop-blur-lg border-t border-gray-200 z-10">
-        <div className="grid grid-cols-3 gap-2 max-w-lg mx-auto">
-             {/* Button 1: Download */}
+      {/* Footer Controls */}
+      <footer className="p-4 bg-red-700 z-10 flex-none shadow-[0_-4px_20px_rgba(0,0,0,0.2)]">
+        <div className="grid grid-cols-3 gap-3">
+             {/* Download */}
              <button
               onClick={handleDownload}
               disabled={isProcessing || !compositedImage}
-              className="flex flex-col items-center justify-center gap-1 bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-2 rounded-xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
+              className="flex flex-col items-center justify-center gap-1 bg-white border-2 border-white text-red-700 font-black italic py-3 rounded-sm hover:bg-red-50 transition-all active:scale-95 disabled:opacity-50"
             >
               <Download className="w-5 h-5" />
-              <span className="text-xs">Download</span>
+              <span className="text-[10px] uppercase tracking-wider">Save</span>
             </button>
 
-            {/* Button 2: Share (Native Web Share) */}
+            {/* Share */}
             <button
               onClick={handleShare}
               disabled={isProcessing || !compositedImage}
-              className="flex flex-col items-center justify-center gap-1 bg-gray-900 text-white font-semibold py-3 px-2 rounded-xl hover:bg-black transition-all active:scale-95 disabled:opacity-50"
+              className="flex flex-col items-center justify-center gap-1 bg-red-800 border-2 border-red-800 text-white font-black italic py-3 rounded-sm hover:bg-red-900 transition-all active:scale-95 disabled:opacity-50"
             >
               <Share2 className="w-5 h-5" />
-              <span className="text-xs">Share</span>
+              <span className="text-[10px] uppercase tracking-wider">Share</span>
             </button>
             
-            {/* Button 3: Star Link (Cloudinary Upload) */}
+            {/* Star Link */}
             <button
               onClick={handleStarLink}
               disabled={isProcessing || !compositedImage || isStarLinking}
-              className="flex flex-col items-center justify-center gap-1 bg-red-600 text-white font-semibold py-3 px-2 rounded-xl hover:bg-red-700 transition-all active:scale-95 disabled:opacity-50 shadow-md shadow-red-200"
+              className="flex flex-col items-center justify-center gap-1 bg-neutral-900 text-white font-black italic py-3 rounded-sm hover:bg-black transition-all active:scale-95 disabled:opacity-50 shadow-lg border-2 border-neutral-900"
             >
               {isStarLinking ? <Loader2 className="w-5 h-5 animate-spin" /> : <Star className="w-5 h-5 fill-white" />}
-              <span className="text-xs">{isStarLinking ? 'Linking...' : 'Star Link'}</span>
+              <span className="text-[10px] uppercase tracking-wider">{isStarLinking ? 'Uploading...' : 'Star Link'}</span>
             </button>
         </div>
-        {shareError && <p className="text-red-600 text-center text-sm mt-3">{shareError}</p>}
+        {shareError && <p className="text-white bg-red-800 p-2 mt-3 text-center text-xs font-black uppercase italic border border-red-600">{shareError}</p>}
       </footer>
     </div>
   );

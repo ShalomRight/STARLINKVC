@@ -41,24 +41,27 @@ export default function App() {
   }
 
   return (
-    <>
-      {page === 'cover' && <CoverPage onStart={handleStart} />}
-      {page === 'upload' && <LandingPage onImageSelect={handleImageSelected} onTakePicture={handleGoToCapture} />}
-      {page === 'capture' && <CapturePage onPhotoTaken={handleImageSelected} onBack={handleBackToUpload} />}
-      {page === 'frames' && selectedImage && (
-        <FrameSelection 
-          onSelectFrame={handleFrameSelected}
-          onBack={handleBackToUpload}
-        />
-      )}
-      {page === 'editor' && selectedImage && (
-        <CameraPage
-          imageSrc={selectedImage}
-          frame={selectedFrame}
-          onBack={handleBackToFrames}
-          onStartOver={handleBackToUpload}
-        />
-      )}
-    </>
+    <div className="min-h-screen w-full bg-neutral-950 flex items-center justify-center overflow-hidden">
+      {/* Mobile Container Constraint */}
+      <div className="w-full h-[100dvh] sm:max-w-[430px] sm:h-[90vh] sm:max-h-[932px] bg-white sm:rounded-[2rem] shadow-2xl overflow-hidden relative flex flex-col">
+        {page === 'cover' && <CoverPage onStart={handleStart} />}
+        {page === 'upload' && <LandingPage onImageSelect={handleImageSelected} onTakePicture={handleGoToCapture} />}
+        {page === 'capture' && <CapturePage onPhotoTaken={handleImageSelected} onBack={handleBackToUpload} />}
+        {page === 'frames' && selectedImage && (
+          <FrameSelection 
+            onSelectFrame={handleFrameSelected}
+            onBack={handleBackToUpload}
+          />
+        )}
+        {page === 'editor' && selectedImage && (
+          <CameraPage
+            imageSrc={selectedImage}
+            frame={selectedFrame}
+            onBack={handleBackToFrames}
+            onStartOver={handleBackToUpload}
+          />
+        )}
+      </div>
+    </div>
   );
 }
