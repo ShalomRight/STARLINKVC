@@ -10,7 +10,7 @@ export const CLOUDINARY_CONFIG = {
   // IMPORTANT: For the "Share" feature to work, you MUST create your own
   // UNSIGNED upload preset in your Cloudinary dashboard and replace the value below.
   // Go to: Settings > Upload > Upload Presets > Add Upload Preset (set Signing Mode to "Unsigned").
-  uploadPreset: "docs_upload_example_us_preset"
+  uploadPreset: "ml_default"
 };
 
 // Supabase Configuration

@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { ArrowLeft, Download, Share2, Loader2, RefreshCw, Link, Star } from 'lucide-react';
 import { type Frame } from '../types';
-import { uploadToSupabase } from '../services/supabase';
+import { uploadToCloudinary } from '../services/cloudinary';
 
 interface CameraPageProps {
   imageSrc: string;
@@ -131,29 +131,29 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
     }
   };
 
-  // Uploads to Supabase and shares the Link
+  // Uploads to Cloudinary and shares the Link
   const handleStarLink = async () => {
     if (!compositedImage || isStarLinking) return;
     setIsStarLinking(true);
     setShareError(null);
 
     try {
-      const publicUrl = await uploadToSupabase(compositedImage);
+      await uploadToCloudinary(compositedImage);
       
-      if (navigator.share) {
-        await navigator.share({
-          title: 'My Star Photo',
-          text: 'Check out the photo I framed!',
-          url: publicUrl,
-        });
-      } else {
-        await navigator.clipboard.writeText(publicUrl);
-        alert('Star Link copied to clipboard!');
-      }
+      // if (navigator.share) {
+      //   await navigator.share({
+      //     title: 'My Star Photo',
+      //     text: 'Check out the photo I framed!',
+      //     url: publicUrl,
+      //   });
+      // } else {
+      //   await navigator.clipboard.writeText(publicUrl);
+      //   alert('Star Link copied to clipboard!');
+      // }
     } catch (error) {
       console.error('Star Link error:', error);
       if (error instanceof Error) {
-        setShareError(`Star Link failed: ${error.message}. Check Supabase config.`);
+        setShareError(`Star Link failed: ${error.message}. Check Cloudinary config.`);
       } else {
         setShareError('An unknown error occurred.');
       }
@@ -216,7 +216,7 @@ const CameraPage: React.FC<CameraPageProps> = ({ imageSrc, frame, onBack, onStar
               <span className="text-xs">Share</span>
             </button>
             
-            {/* Button 3: Star Link (Supabase Upload) */}
+            {/* Button 3: Star Link (Cloudinary Upload) */}
             <button
               onClick={handleStarLink}
               disabled={isProcessing || !compositedImage || isStarLinking}
