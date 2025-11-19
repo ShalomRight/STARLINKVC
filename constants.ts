@@ -21,11 +21,11 @@ export const SUPABASE_CONFIG = {
 
 // Frame data - these PNG files should be in public/frames/
 export const FRAMES: Frame[] = [
-  { id: 'default-1', name: 'Classic Border', category: 'minimal', url: '/public/frames/default-1.png' },
-  { id: 'default-2', name: 'Elegant Frame', category: 'minimal', url: '/public/frames/default-2.png' },
-  { id: 'default-3', name: 'Party Vibes', category: 'fun', url: '/public/frames/default-3.png' },
-  { id: 'default-4', name: 'Event Special', category: 'events', url: '/public/frames/default-4.png' },
-  { id: 'default-5', name: 'Celebration', category: 'events', url: '/public/frames/default-5.png' },
+  { id: 'default-1', name: 'Classic Border', category: 'minimal', url: 'public/frames/default-1.png' },
+  { id: 'default-2', name: 'Elegant Frame', category: 'minimal', url: 'public/frames/default-2.png' },
+  { id: 'default-3', name: 'Party Vibes', category: 'fun', url: 'public/frames/default-3.png' },
+  { id: 'default-4', name: 'Event Special', category: 'events', url: 'public/frames/default-4.png' },
+  { id: 'default-5', name: 'Celebration', category: 'events', url: 'public/frames/default-5.png' },
 ];
 
 export const CATEGORIES = ['All Frames', 'Minimal', 'Events', 'Fun'];
